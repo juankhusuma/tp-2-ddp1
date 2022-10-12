@@ -1,16 +1,39 @@
 import os
-import re
+# import re
 import sys
 
 
-def search_string(text, pattern, flag=None):
-    text = " " + text
-    main_pattern = pattern.replace("*", "(.+)")
-    if flag == "-w":
-        main_pattern = r"\s" + main_pattern + r"\s"
+def search_string(line, pattern, flag=None):
     if flag == "-i":
-        return re.compile(main_pattern, re.I).search(text)
-    return re.compile(main_pattern).search(text)
+        line = line.lower()
+        pattern = pattern.lower()
+    if flag == "-w":
+        pattern = " " + pattern + " "
+        line = " " + line + " "
+    if "*" in pattern:
+        pattern = pattern.split("*")
+        head = False
+        tail = False
+        for i in range(len(line) - len(pattern[0]) + 1):
+            if line[i:i+len(pattern[0])] == pattern[0]:
+                head = True
+                line = line[i+len(pattern[0]):]
+        print(line)
+        for i in range(len(line)-len(pattern[1]) + 1):
+            if line[i:i+len(pattern[1])] == pattern[1]:
+                tail = True
+        return head and tail
+    return pattern in line
+
+
+# def search_string(text, pattern, flag=None):
+#     text = f" {text} "
+#     main_pattern = pattern.replace("*", "(.+)")
+#     if flag == "-w":
+#         main_pattern = r"\s" + main_pattern + r"\s"
+#     if flag == "-i":
+#         return re.compile(main_pattern, re.I).search(text)
+#     return re.compile(main_pattern).search(text)
 
 
 def check_file(path, pattern, flag):
